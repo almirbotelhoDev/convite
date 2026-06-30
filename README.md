@@ -1,4 +1,4 @@
-# 💝 vamos sair?
+# 💝 Convite?
 
 > Site interativo de convite onde o botão **"Não"** foge do cursor — e só resta o **"Sim"**.
 
