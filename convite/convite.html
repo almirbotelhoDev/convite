@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vamos sair?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0f;
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* orbs de luz de fundo */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  .orb1 { width: 340px; height: 340px; background: #c0392b; top: -60px; right: -80px; animation-delay: 0s; }
+  .orb2 { width: 260px; height: 260px; background: #7d2d8e; bottom: -40px; left: -60px; animation-delay: 1.4s; }
+  .orb3 { width: 180px; height: 180px; background: #c0392b; bottom: 30%; right: 10%; animation-delay: 2.8s; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.28; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(1.08); }
+  }
+
+  /* card central */
+  .card {
+    position: relative;
+    z-index: 2;
+    background: rgba(18, 16, 28, 0.85);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 24px;
+    padding: 44px 36px 40px;
+    width: min(420px, 92vw);
+    text-align: center;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 0 60px rgba(192,57,43,0.18), 0 24px 48px rgba(0,0,0,0.6);
+  }
+
+  .screen { display: none; flex-direction: column; align-items: center; }
+  .screen.active { display: flex; }
+
+  /* título neon */
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    background: linear-gradient(135deg, #ff6b35 0%, #f7c59f 50%, #ff6b35 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+    margin-bottom: 28px;
+    text-shadow: none;
+  }
+
+  /* emoji container com brilho */
+  .emoji-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 32px;
+  }
+
+  .emoji-bg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 38%, #fff 0%, #e8e0d0 60%, #c8b89a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 0 0 3px rgba(255,107,53,0.3),
+      0 0 28px rgba(255,107,53,0.2),
+      0 12px 30px rgba(0,0,0,0.5);
+    animation: floatEmoji 3s ease-in-out infinite;
+  }
+
+  @keyframes floatEmoji {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .emoji-face {
+    font-size: 90px;
+    line-height: 1;
+    user-select: none;
+  }
+
+  /* botões */
+  .btn-row {
+    position: relative;
+    width: 100%;
+    min-height: 130px;
+    margin-top: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+  }
+
+  button {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 13px 28px;
+    border: none;
+    letter-spacing: 0.3px;
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+
+  .btn-sim {
+    position: relative;
+    background: linear-gradient(135deg, #ff6b35, #c0392b);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(192,57,43,0.45);
+    min-width: 130px;
+  }
+  .btn-sim:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(255,107,53,0.6); }
+  .btn-sim:active { transform: scale(0.97); }
+
+  .btn-nao {
+    position: absolute;
+    left: 70%;
+    top: 16px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.12);
+    min-width: 100px;
+    will-change: left, top, transform;
+  }
+
+  .caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.38);
+    min-height: 1.4em;
+    font-style: italic;
+  }
+
+  /* tela de sucesso */
+  .yay h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem, 9vw, 3rem);
+    background: linear-gradient(135deg, #ff6b35, #f7c59f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+  .yay p {
+    color: rgba(255,255,255,0.7);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-top: 6px;
+  }
+  .yay .emoji-face { font-size: 100px; }
+
+  /* confete */
+  .confetti {
+    position: fixed;
+    top: -30px;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: cffall linear forwards;
+    z-index: 99;
+  }
+  @keyframes cffall {
+    to { transform: translateY(110vh) rotate(540deg); opacity: 0.8; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orb, .emoji-bg { animation: none; }
+    .btn-nao { transition: none; }
+    .confetti { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="card">
+
+  <!-- TELA 1: convite -->
+  <div class="screen active" id="screen-ask">
+    <h1>Vamos sair sábado?</h1>
+
+    <div class="emoji-wrap">
+      <div class="emoji-bg">
+        <span class="emoji-face" id="emoji">🤔</span>
+      </div>
+    </div>
+
+    <div class="btn-row" id="btnRow">
+      <button class="btn-sim" id="btnSim">Sim 🥰</button>
+      <button class="btn-nao" id="btnNao">Não 😅</button>
+      <div class="caption" id="caption" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- TELA 2: confirmação -->
+  <div class="screen yay" id="screen-yay">
+    <h1>Uhuuuu!!! 🎉</h1>
+    <div class="emoji-wrap" style="margin-bottom:24px">
+      <div class="emoji-bg">
+        <span class="emoji-face">😎</span>
+      </div>
+    </div>
+    <p>Combinado então! ❤️</p>
+    <p>Até, não prometo nada só companhia e risadas 🤪</p>
+  </div>
+
+</div>
+
+<script>
+  const btnNao   = document.getElementById('btnNao');
+  const btnSim   = document.getElementById('btnSim');
+  const btnRow   = document.getElementById('btnRow');
+  const caption  = document.getElementById('caption');
+  const emoji    = document.getElementById('emoji');
+  const screenAsk = document.getElementById('screen-ask');
+  const screenYay = document.getElementById('screen-yay');
+
+  const captions = [
+    '',
+    'hm, tentou apertar o Não? 😅',
+    'o botão fugiu de você kkk',
+    'insiste não, amor...',
+    'só tem uma resposta certa aqui',
+    'olha, o Não não quer ser clicado',
+    'você realmente quer dizer não? 🥺',
+    'o botão tá com medo de você',
+    'ok, vou esperar o dia todo aqui... 😂',
+    'CLICA NO SIM LOGO 😤'
+  ];
+
+  const emojis = ['🤔','😅','🥺','😩','😭','🙈','😤','🤭','😂'];
+
+  let attempts = 0;
+
+  function moveNao() {
+    const w   = btnRow.clientWidth;
+    const h   = btnRow.clientHeight;
+    const bW  = btnNao.offsetWidth;
+    const bH  = btnNao.offsetHeight;
+
+    // garante que não sobreponha o botão Sim
+    let left, top;
+    let tries = 0;
+    const simRect = btnSim.getBoundingClientRect();
+    const rowRect = btnRow.getBoundingClientRect();
+    const simLeft = simRect.left - rowRect.left;
+    const simTop  = simRect.top  - rowRect.top;
+
+    do {
+      left = Math.random() * Math.max(w - bW - 8, 0);
+      top  = Math.random() * Math.max(h - bH - 28, 0);
+      tries++;
+    } while (
+      tries < 20 &&
+      Math.abs(left - simLeft) < bW + 20 &&
+      Math.abs(top - simTop) < bH + 16
+    );
+
+    btnNao.style.left = left + 'px';
+    btnNao.style.top  = top  + 'px';
+    btnNao.style.transform = 'rotate(' + (Math.random() * 20 - 10) + 'deg)';
+
+    attempts++;
+    caption.textContent = captions[Math.min(attempts, captions.length - 1)];
+    emoji.textContent   = emojis [Math.min(attempts, emojis.length   - 1)];
+  }
+
+  btnNao.addEventListener('mouseenter', moveNao);
+  btnNao.addEventListener('touchstart', (e) => { e.preventDefault(); moveNao(); }, { passive: false });
+  btnNao.addEventListener('click',      (e) => { e.preventDefault(); moveNao(); });
+
+  btnSim.addEventListener('click', () => {
+    screenAsk.classList.remove('active');
+    screenYay.classList.add('active');
+    launchConfetti();
+  });
+
+  function launchConfetti() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const bits = ['❤️','🧡','💛','💜','✨','🎉','💗'];
+    for (let i = 0; i < 32; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.textContent = bits[Math.floor(Math.random() * bits.length)];
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.animationDuration = (2 + Math.random() * 2.5) + 's';
+        el.style.fontSize = (1 + Math.random()) + 'rem';
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }, i * 70);
+    }
+  }
+
+  // posição inicial do Não
+  window.addEventListener('load', () => {
+    btnNao.style.left = '70%';
+    btnNao.style.top  = '16px';
+  });
+</script>
+</body>
+</html>
